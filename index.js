@@ -27,8 +27,49 @@ async function run() {
 
 		const toysCollection = client.db('marvelToys').collection('toysCollection');
 
+		const indexKeys = { name: 1 };
+		const indexOption = { name: 'SearchByName' };
+		const result = toysCollection.createIndex(indexKeys, indexOption);
+
+		// all toys
 		app.get('/allToys', async (req, res) => {
-			const cursor = await toysCollection.find().toArray();
+			const cursor = await toysCollection.find().limit(20).toArray();
+			res.send(cursor);
+		});
+
+		// search by name
+		app.get('/allToys/search/:text', async (req, res) => {
+			const search = req.params.text;
+			console.log(search);
+			const result = await toysCollection
+				.find({ name: { $regex: search, $options: 'i' } })
+				.toArray();
+			res.send(result);
+		});
+
+		// subcategory
+		app.get('/subcategory/avengers', async (req, res) => {
+			const query = { sub_category: 'Avengers' };
+			const cursor = await toysCollection.find(query).toArray();
+			res.send(cursor);
+		});
+		app.get('/subcategory/guardians', async (req, res) => {
+			const query = { sub_category: 'Guardians of the Galaxy' };
+			const cursor = await toysCollection.find(query).toArray();
+			res.send(cursor);
+		});
+		app.get('/subcategory/xmen', async (req, res) => {
+			const query = { sub_category: 'X-Men' };
+			const cursor = await toysCollection.find(query).toArray();
+			res.send(cursor);
+		});
+
+		// user
+		app.get('/user/:email', async (req, res) => {
+			console.log(req.params.email);
+			const email = req.params.email;
+			const query = { seller_email: email };
+			const cursor = await toysCollection.find(query).toArray();
 			res.send(cursor);
 		});
 
