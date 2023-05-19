@@ -64,6 +64,13 @@ async function run() {
 			res.send(cursor);
 		});
 
+		// add toys
+		app.post('/addToy', async (req, res) => {
+			const toy = req.body;
+			const result = await toysCollection.insertOne(toy);
+			res.send(result);
+		});
+
 		// user
 		app.get('/user/:email', async (req, res) => {
 			console.log(req.params.email);
