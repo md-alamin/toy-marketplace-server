@@ -99,6 +99,7 @@ async function run() {
 			const cursor = await toysCollection
 				.find(query)
 				.sort({ price: sort })
+				.collation({ locale: 'en_US', numericOrdering: true })
 				.toArray();
 			res.send(cursor);
 		});
