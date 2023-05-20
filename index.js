@@ -9,6 +9,8 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+// app.options('*', cors());
+
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.gt8d3ye.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -83,7 +85,21 @@ async function run() {
 		app.get('/user/:email', async (req, res) => {
 			const email = req.params.email;
 			const query = { seller_email: email };
+			console.log(email);
 			const cursor = await toysCollection.find(query).toArray();
+			res.send(cursor);
+		});
+
+		// sort by price
+		app.get('/sort/:email', async (req, res) => {
+			const email = req.params.email;
+			const sort = req.query.sort;
+			console.log(sort, email);
+			const query = { seller_email: email };
+			const cursor = await toysCollection
+				.find(query)
+				.sort({ price: sort })
+				.toArray();
 			res.send(cursor);
 		});
 
